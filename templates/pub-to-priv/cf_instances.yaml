@@ -1,0 +1,107 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  PublicKeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair.
+  PublicInstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t1.micro
+      - t2.nano
+      - t2.micro
+      - t2.small
+    ConstraintDescription: Must be a valid EC2 instance type.
+  PrivateKeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair.
+  PrivateInstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t1.micro
+      - t2.nano
+      - t2.micro
+      - t2.small
+    ConstraintDescription: Must be a valid EC2 instance type.
+
+Mappings:
+  AWSRegion2AMI:
+    us-east-1:
+      HVM64: ami-6869aa05
+    us-west-2:
+      HVM64: ami-7172b611
+    us-west-1:
+      HVM64: ami-31490d51
+    eu-west-1:
+      HVM64: ami-f9dd458a
+    eu-central-1:
+      HVM64: ami-ea26ce85
+    ap-northeast-1:
+      HVM64: ami-374db956
+    ap-northeast-2:
+      HVM64: ami-2b408b45
+    ap-southeast-1:
+      HVM64: ami-a59b49c6
+    ap-southeast-2:
+      HVM64: ami-dc361ebf
+    ap-south-1:
+      HVM64: ami-ffbdd790
+    us-east-2:
+      HVM64: ami-f6035893
+    sa-east-1:
+      HVM64: ami-6dd04501
+    cn-north-1:
+      HVM64: ami-8e6aa0e3
+
+Resources:
+
+  # Instances setup
+  PrivateInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      DisableApiTermination: 'false'
+      InstanceInitiatedShutdownBehavior: stop
+      ImageId: !FindInMap [AWSRegion2AMI, !Ref 'AWS::Region', HVM64]
+      InstanceType: !Ref PrivateInstanceType
+      KeyName: !Ref PrivateKeyName
+      Monitoring: 'false'
+      Tags:
+      - Key: Name
+        Value: Private_Trial
+      NetworkInterfaces:
+      - DeleteOnTermination: 'true'
+        Description: Primary network interface
+        DeviceIndex: 0
+        SubnetId:
+          !ImportValue PrivateSub
+        PrivateIpAddresses:
+        - PrivateIpAddress: 10.0.2.212
+          Primary: 'true'
+        GroupSet:
+        - !ImportValue PrivateSG
+  PublicInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      DisableApiTermination: 'false'
+      InstanceInitiatedShutdownBehavior: stop
+      ImageId: ami-0a174bb076b94a327
+      InstanceType: !Ref PublicInstanceType
+      KeyName: !Ref PublicKeyName
+      Monitoring: 'false'
+      Tags:
+      - Key: Name
+        Value: Public_Trial
+      NetworkInterfaces:
+      - DeleteOnTermination: 'true'
+        Description: Primary network interface
+        DeviceIndex: 0
+        SubnetId:
+          !ImportValue PublicSub
+        PrivateIpAddresses:
+        - PrivateIpAddress: 10.0.1.161
+          Primary: 'true'
+        GroupSet:
+        - !ImportValue PublicSG
+        AssociatePublicIpAddress: 'true'

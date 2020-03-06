@@ -1,0 +1,40 @@
+---
+Resources:
+  MyS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: newbucket20200303
+  MyBucketPolicy:
+     Type: AWS::S3::BucketPolicy
+     Properties:
+       Bucket:
+         Ref: 'MyS3'
+       PolicyDocument:
+         Statement:
+         -
+           Sid: 'ThingPolicy'
+           Action:
+             - 's3:*'
+           Effect: 'Deny'
+           Resource:
+             - Fn::Join:
+               - ''
+               -
+                 - 'arn:aws:s3:::'
+                 -
+                   Ref: 'MyS3'
+
+             - Fn::Join:
+               - ''
+               -
+                 - 'arn:aws:s3:::'
+                 -
+                   Ref: 'MyS3'
+                 - '/*'
+           Principal: '*'
+           Condition:
+             StringNotLike:
+               aws:userId:
+               - Fn::ImportValue: !Sub "${InstanceRoleId}:*"
+               - AIDARBMTF37XSAFFX2PZN

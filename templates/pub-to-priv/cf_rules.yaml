@@ -1,0 +1,338 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+
+  # Private ACL Rules setup
+  acl1:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '80'
+      PortRange:
+        From: '80'
+        To: '80'
+      NetworkAclId:
+        !ImportValue PrivateACL
+  acl2:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '90'
+      PortRange:
+        From: '443'
+        To: '443'
+      NetworkAclId:
+        !ImportValue PrivateACL
+  acl3:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.1.161/32
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '100'
+      PortRange:
+        From: '1024'
+        To: '65535'
+      NetworkAclId:
+        !ImportValue PrivateACL
+  acl4:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '80'
+      PortRange:
+        From: '80'
+        To: '80'
+      NetworkAclId:
+        !ImportValue PrivateACL
+  acl5:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '90'
+      PortRange:
+        From: '443'
+        To: '443'
+      NetworkAclId:
+        !ImportValue PrivateACL
+  acl6:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '95'
+      PortRange:
+        From: '1024'
+        To: '65535'
+      NetworkAclId:
+        !ImportValue PrivateACL
+  acl7:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.1.161/32
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '100'
+      PortRange:
+        From: '22'
+        To: '22'
+      NetworkAclId:
+        !ImportValue PrivateACL
+
+  # Public ACL Rules setup
+  acl8:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '80'
+      PortRange:
+        From: '80'
+        To: '80'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl9:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '90'
+      PortRange:
+        From: '443'
+        To: '443'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl10:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '100'
+      PortRange:
+        From: '32768'
+        To: '65535'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl11:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.2.212/32
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '150'
+      PortRange:
+        From: '22'
+        To: '22'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl12:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '80'
+      PortRange:
+        From: '80'
+        To: '80'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl13:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '90'
+      PortRange:
+        From: '443'
+        To: '443'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl14:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '95'
+      PortRange:
+        From: '32768'
+        To: '65535'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl15:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '100'
+      PortRange:
+        From: '22'
+        To: '22'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl16:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 10.0.2.212/32
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '150'
+      PortRange:
+        From: '1024'
+        To: '65535'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl17:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '10'
+      PortRange:
+        From: '3389'
+        To: '3389'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl18:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '10'
+      PortRange:
+        From: '3389'
+        To: '3389'
+      NetworkAclId:
+        !ImportValue PublicACL
+  acl19:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '6'
+      RuleAction: allow
+      RuleNumber: '20'
+      PortRange:
+        From: '1024'
+        To: '65535'
+      NetworkAclId:
+        !ImportValue PublicACL
+
+# Private Security Group Rules
+  ingress1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        !ImportValue PrivateSG
+      IpProtocol: tcp
+      FromPort: '22'
+      ToPort: '22'
+      CidrIp: 10.0.1.161/32
+  egress1:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PrivateSG
+      IpProtocol: tcp
+      FromPort: '80'
+      ToPort: '80'
+      CidrIp: 0.0.0.0/0
+  egress2:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PrivateSG
+      IpProtocol: tcp
+      FromPort: '443'
+      ToPort: '443'
+      CidrIp: 0.0.0.0/0
+  egress3:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PrivateSG
+      IpProtocol: icmp
+      FromPort: "-1"
+      ToPort: "-1"
+      CidrIp: 0.0.0.0/0
+
+# Public Security Group Rules
+  ingress2:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        !ImportValue PublicSG
+      IpProtocol: tcp
+      FromPort: '22'
+      ToPort: '22'
+      CidrIp: 0.0.0.0/0
+  ingress3:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        !ImportValue PublicSG
+      IpProtocol: tcp
+      FromPort: '3389'
+      ToPort: '3389'
+      CidrIp: 0.0.0.0/0
+  egress4:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PublicSG
+      IpProtocol: tcp
+      FromPort: '80'
+      ToPort: '80'
+      CidrIp: 0.0.0.0/0
+  egress5:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PublicSG
+      IpProtocol: tcp
+      FromPort: '22'
+      ToPort: '22'
+      CidrIp: 10.0.2.212/32
+  egress6:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PublicSG
+      IpProtocol: tcp
+      FromPort: '443'
+      ToPort: '443'
+      CidrIp: 0.0.0.0/0
+  egress7:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        !ImportValue PublicSG
+      IpProtocol: icmp
+      FromPort: "-1"
+      ToPort: "-1"
+      CidrIp: 0.0.0.0/0
