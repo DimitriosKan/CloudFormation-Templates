@@ -1,6 +1,0 @@
-# Relevant configurations for the template
-
-template_path: ec2-s3/cf_master.yaml
-parameters:
-  PrivateKeyName: 'ire_priv_kp'
-  PrivateInstanceType: 't2.nano'
