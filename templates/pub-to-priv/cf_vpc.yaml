@@ -1,0 +1,223 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+
+  # VPC Setup
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      InstanceTenancy: default
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'false'
+      Tags:
+      # param
+      - Key: Name
+        Value: trial-vpc
+
+# Private Subnet setup
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      # param
+      AvailabilityZone: eu-west-1c
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        # param (+ concatinate az and cidr block at the end)
+        Value: trial_priv_subnet
+
+# Public Subnet setup
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      # param
+      AvailabilityZone: eu-west-1c
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        # param (+ concatinate az and cidr block at the end)
+        Value: trial_pub_subnet
+
+# Internet Gateway setup
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        # param
+        Value: trial_ig
+
+# Nat Gateway setup
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+        - EIP
+        - AllocationId
+      SubnetId:
+        # param
+        Ref: PublicSubnet
+
+# Private ACL setup
+  PrivateAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        # param
+        Value: Private_NACL
+
+# Public ACL setup
+  PublicAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        # param
+        Value: Public_NACL
+
+# Private Security Group setup
+  PrivateSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Privately set up security group
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: Private_Trial_SG
+
+# Public Security Group setup
+  PublicSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Publically set up security group 
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: Public_Trial_SG
+
+# Route Tables setup
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: trial_public_rt
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: trial_priv_rt
+  
+  # Subnet to ACL allocation
+  subnetacl1:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId:
+        Ref: PrivateAcl
+      SubnetId:
+        Ref: PrivateSubnet
+  subnetacl2:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId:
+        Ref: PublicAcl
+      SubnetId:
+        Ref: PublicSubnet
+
+  # Attaching IG to VPC
+  gw1:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+# Attach Gateways to Route Tables
+  route1:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId:
+        Ref: PublicRouteTable
+      GatewayId:
+        Ref: InternetGateway
+    DependsOn: gw1
+  route2:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId:
+        Ref: PrivateRouteTable
+      NatGatewayId:
+        Ref: NatGateway
+
+# Attach Route Tables to Subnets
+  subnetroute2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: PublicSubnet
+  subnetroute3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: PrivateSubnet
+
+Outputs:
+  PubSG:
+    Description: Private Subnet created
+    Value: !Ref PublicSg
+    Export:
+      Name: PublicSG
+  PrivSG:
+    Description: Private Subnet created
+    Value: !Ref PrivateSg
+    Export:
+      Name: PrivateSG
+  PubACL:
+    Description: Public ACL created
+    Value: !Ref PublicAcl
+    Export:
+      Name: PublicACL
+  PrivACL:
+    Description: Private ACL created
+    Value: !Ref PrivateAcl
+    Export:
+      Name: PrivateACL
+  PubSub:
+    Description: Public Subnet created
+    Value: !Ref PublicSubnet
+    Export:
+      Name: PublicSub
+  PrivSub:
+    Description: Private Subnet created
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: PrivateSub
