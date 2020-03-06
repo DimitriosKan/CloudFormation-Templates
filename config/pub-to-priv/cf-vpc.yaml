@@ -1,0 +1,4 @@
+# Relevant configurations for the template
+
+template_path: dev/cf_vpc.yaml
+parameters:

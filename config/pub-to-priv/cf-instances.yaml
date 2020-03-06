@@ -1,0 +1,8 @@
+# Relevant configurations for the template
+
+template_path: dev/cf_instances.yaml
+parameters:
+  PrivateKeyName: 'ire_priv_kp'
+  PublicKeyName: 'ire_pub_kp'
+  PrivateInstanceType: 't2.micro'
+  PublicInstanceType: 't2.micro'

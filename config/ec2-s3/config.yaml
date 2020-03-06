@@ -1,0 +1,4 @@
+# Env config below
+
+project_code: ec2-s3-cf
+region: eu-west-1
